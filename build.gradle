@@ -2,9 +2,10 @@ plugins {
     id 'groovy-gradle-plugin'
     id 'maven-publish'
     id 'com.gradle.plugin-publish' version '0.16.0'
+    id 'com.diffplug.spotless' version '7.0.2'
 }
 
-group = 'com.peterabeles.gversion'
+group = 'com.oakvillerobotics.gversion'
 version = '1.10.3'
 
 repositories {
@@ -26,18 +27,24 @@ compileJava {
 }
 
 pluginBundle {
-    website = 'https://github.com/lessthanoptimal/gversion-plugin'
-    vcsUrl = 'https://github.com/lessthanoptimal/gversion-plugin'
-    tags = ['version', 'git', 'gradle','auto generate','auto code']
+    website = 'https://github.com/OakvilleDynamics/gversion-plugin'
+    vcsUrl = 'https://github.com/OakvilleDynamics/gversion-plugin'
+    tags = [
+        'version',
+        'git',
+        'gradle',
+        'auto generate',
+        'auto code'
+    ]
 }
 
 gradlePlugin {
     plugins {
         gversionPlugin {
-            id = 'com.peterabeles.gversion'
+            id = 'com.oakvillerobotics.gversion'
             displayName = 'GVersion Plugin'
             description = 'Auto-generates project version files from Git and Gradle at compile time'
-            implementationClass = 'com.peterabeles.GVersion'
+            implementationClass = 'com.oakvillerobotics.GVersion'
         }
     }
 }
@@ -45,4 +52,54 @@ gradlePlugin {
 wrapper {
     distributionType = Wrapper.DistributionType.BIN
     gradleVersion = '7.6.4'
+}
+
+spotless {
+    groovy {
+        // Use the default importOrder configuration
+        importOrder()
+        // removes semicolons at the end of lines
+        removeSemicolons()
+        // the Groovy Eclipse formatter extends the Java Eclipse formatter,
+        // so it formats Java files by default (unless `excludeJava` is used).
+        greclipse() // has its own section below
+
+        // exclude Java files from formatting
+        excludeJava()
+        indentWithSpaces(2)
+    }
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**', '**/bin/**'
+        }
+        toggleOffOn()
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        greclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
+            include '**/*.md', '**/.gitignore'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }

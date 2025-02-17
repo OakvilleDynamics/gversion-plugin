@@ -6,9 +6,11 @@ The class will include information which can only be obtained at compile time, s
 
 Commandline applications are used to gather most of this information, and if a command line operation fails, a default value will be used instead.
 
-This has been tested on Linux, Windows, and macOS.
+Compatible with Java 11 and higher.
 
-Tested on Gradle 7. Earlier versions will run on earlier versions of Gradle.
+> [!NOTE]
+>
+> A Spotless limitation leaves Java 8 out of support. If you drop the Spotless plugin (or downgrade to 6.13.0), Java 8 should work.
 
 Add the following to include `gversion-plugin` in your project.
 
